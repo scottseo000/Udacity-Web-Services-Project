@@ -2,7 +2,9 @@ package com.udacity.vehicles.service;
 
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.domain.car.CarRepository;
-import com.udacity.vehicles.client.*;
+import com.udacity.vehicles.domain.Location;
+import com.udacity.vehicles.client.maps.MapsClient;
+import com.udacity.vehicles.client.prices.PriceClient;
 import java.util.*;
 import org.springframework.stereotype.Service;
 
@@ -39,13 +41,13 @@ public class CarService {
      */
     public Car findById(Long id) {
         Optional<Car> doesCarExist = repository.findById(id);
-        Car car;
+        Car car = null;
         if(doesCarExist.isPresent()) {
             car = doesCarExist.get();
         } else { throw new CarNotFoundException(); }
 
         car.setPrice(priceClient.getPrice(id));
-        car.setLocation(mapsClient.getAddress(car.getLocation));
+        car.setLocation(mapsClient.getAddress(car.getLocation()));
 
         return car;
     }

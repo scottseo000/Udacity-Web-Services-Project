@@ -101,19 +101,21 @@
                         <configuration>
                             <sourceRoot>${project.build.directory}/generated-sources/cxf
                             </sourceRoot>
-                            <wsdlOptions>
-                                <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/price.wsdl</wsdl>
-                                </wsdlOption>
-                            </wsdlOptions>
-                        </configuration>
-                        <goals>
-                            <goal>wsdl2java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+                            <!--
+                           <wsdlOptions>
+                               <wsdlOption>
+                                   <wsdl>${basedir}/src/main/resources/price.wsdl</wsdl>
+                               </wsdlOption>
+                           </wsdlOptions>
+                           -->
+                       </configuration>
+                       <goals>
+                           <goal>wsdl2java</goal>
+                       </goals>
+                   </execution>
+               </executions>
+           </plugin>
+       </plugins>
+   </build>
 
 </project>
