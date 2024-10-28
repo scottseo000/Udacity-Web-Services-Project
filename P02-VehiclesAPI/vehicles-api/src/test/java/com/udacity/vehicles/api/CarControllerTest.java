@@ -90,11 +90,41 @@ public class CarControllerTest {
      */
     @Test
     public void listCars() throws Exception {
-
-        Car car = getCar();
         mvc.perform(get(new URI("/cars")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.carList").exists())
+                //There should only be 1 car in the list, the one created in getCar()
+                //This one should return same as findCar but inside {"_embedded":{"carList":[ **the entire json of car id 1L** ]}
+                .andExpect(content().string(
+                        "{\"_embedded\":{\"carList\":[" +
+                                "{\"id\":1," +
+                                "\"createdAt\":null," +
+                                "\"modifiedAt\":null," +
+                                "\"condition\":\"USED\"," +
+                                "\"details\":{" +
+                                "\"body\":\"sedan\"," +
+                                "\"model\":\"Impala\"," +
+                                "\"manufacturer\":{\"code\":101,\"name\":\"Chevrolet\"}," +
+                                "\"numberOfDoors\":4," +
+                                "\"fuelType\":" +
+                                "\"Gasoline\"," +
+                                "\"engine\":\"3.6L V6\"," +
+                                "\"mileage\":32280," +
+                                "\"modelYear\":2018," +
+                                "\"productionYear\":2018," +
+                                "\"externalColor\":\"white\"}," +
+
+                                "\"location\":{" +
+                                "\"lat\":40.73061," +
+                                "\"lon\":-73.935242," +
+                                "\"address\":null," +
+                                "\"city\":null," +
+                                "\"state\":null," +
+                                "\"zip\":null}," +
+                                "\"price\":null," +
+                                "\"_links\":{\"self\":{\"href\":\"http://localhost/cars/1\"}," +
+                                "\"cars\":{\"href\":\"http://localhost/cars\"}}}]}," +
+                                "\"_links\":{\"self\":{\"href\":\"http://localhost/cars\"}}}"))
                 .andDo(print());
     }
 
@@ -104,13 +134,44 @@ public class CarControllerTest {
      */
     @Test
     public void findCar() throws Exception {
-
-        //TODO figure this out
-        Car car = getCar();
+        /*
         mvc.perform(get("/cars/{id}", car.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(car.getId()))
                 .andDo(print());
+         */
+        //Gonna brute force it instead
+        mvc.perform(get("/cars/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(content().string(
+                        "{\"id\":1," +
+                        "\"createdAt\":null," +
+                        "\"modifiedAt\":null," +
+                        "\"condition\":\"USED\"," +
+                        "\"details\":{" +
+                        "\"body\":\"sedan\"," +
+                        "\"model\":\"Impala\"," +
+                        "\"manufacturer\":{\"code\":101,\"name\":\"Chevrolet\"}," +
+                        "\"numberOfDoors\":4," +
+                        "\"fuelType\":" +
+                        "\"Gasoline\"," +
+                        "\"engine\":\"3.6L V6\"," +
+                        "\"mileage\":32280," +
+                        "\"modelYear\":2018," +
+                        "\"productionYear\":2018," +
+                        "\"externalColor\":\"white\"}," +
+
+                        "\"location\":{" +
+                        "\"lat\":40.73061," +
+                        "\"lon\":-73.935242," +
+                        "\"address\":null," +
+                        "\"city\":null," +
+                        "\"state\":null," +
+                        "\"zip\":null}," +
+                        "\"price\":null," +
+                        "\"_links\":{\"self\":{\"href\":\"http://localhost/cars/1\"}," +
+                        "\"cars\":{\"href\":\"http://localhost/cars\"}}}"));
+
     }
 
     /**
@@ -119,12 +180,8 @@ public class CarControllerTest {
      */
     @Test
     public void deleteCar() throws Exception {
-        //TODO this one returns 405 instead of 204
-        Car car = getCar();
-        Long carId = car.getId();
-        mvc.perform(delete("/cars/{id}", car.getId()))
-                .andExpect(status().isNoContent())
-                .andDo(print());
+        mvc.perform(delete("/cars/{id}", 1L))
+                .andExpect(status().isNoContent());
     }
 
     /**
