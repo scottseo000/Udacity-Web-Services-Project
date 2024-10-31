@@ -183,7 +183,59 @@ public class CarControllerTest {
         mvc.perform(delete("/cars/{id}", 1L))
                 .andExpect(status().isNoContent());
     }
+    /**
+     * Tests the update operation for a single car by ID.
+     * @throws Exception if the read operation for a single car fails
+     */
+    @Test
+    public void updateCar() throws Exception {
+        Car car = getCar();
 
+        //id shows up as null after the update while all other details were properly updated or transferred
+        car.setId(1L);
+
+        //Details constructor does not take parameters, so it must be created then updated
+        Details details = car.getDetails();
+        details.setFuelType("Electric");
+        details.setManufacturer(new Manufacturer(200, "BMW"));
+        details.setModel("i5");
+        car.setDetails(details);
+        given(carService.save(any())).willReturn(car);
+
+        mvc.perform(put("/cars/{id}", 1L)
+                        .content(json.write(car).getJson())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().string(
+                        "{\"id\":1," +
+                                "\"createdAt\":null," +
+                                "\"modifiedAt\":null," +
+                                "\"condition\":\"USED\"," +
+                                "\"details\":{" +
+                                "\"body\":\"sedan\"," +
+                                "\"model\":\"i5\"," +
+                                "\"manufacturer\":{\"code\":200,\"name\":\"BMW\"}," +
+                                "\"numberOfDoors\":4," +
+                                "\"fuelType\":" +
+                                "\"Electric\"," +
+                                "\"engine\":\"3.6L V6\"," +
+                                "\"mileage\":32280," +
+                                "\"modelYear\":2018," +
+                                "\"productionYear\":2018," +
+                                "\"externalColor\":\"white\"}," +
+
+                                "\"location\":{" +
+                                "\"lat\":40.73061," +
+                                "\"lon\":-73.935242," +
+                                "\"address\":null," +
+                                "\"city\":null," +
+                                "\"state\":null," +
+                                "\"zip\":null}," +
+                                "\"price\":null," +
+                                "\"_links\":{\"self\":{\"href\":\"http://localhost/cars/1\"}," +
+                                "\"cars\":{\"href\":\"http://localhost/cars\"}}}"));
+    }
     /**
      * Creates an example Car object for use in testing.
      * @return an example Car object
